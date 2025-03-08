@@ -1,0 +1,8 @@
+/home/victor/Descargas/foto
+
+La aplicación móvil para la gestión y control de vuelos permite a pasajeros, tripulación y personal del aeropuerto acceder a información en tiempo real.
+
+Pasajeros pueden verificar el estado de su vuelo, recibir notificaciones de cambios, hacer check-in, acceder a su tarjeta de embarque digital y gestionar cambios en su itinerario.
+Tripulación recibe actualizaciones sobre itinerarios, asignaciones de aeronaves e información meteorológica.
+Personal del aeropuerto gestiona y actualiza la información de puertas de embarque, envía alertas en tiempo real y coordina con la tripulación y mantenimiento.
+El sistema de la aerolínea integra servicios adicionales como transporte, salas VIP y tiempos de espera en seguridad.
