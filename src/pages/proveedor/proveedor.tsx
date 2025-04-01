@@ -1,19 +1,127 @@
-import React from "react";
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/react";
+import React, { useState } from 'react';
+import { IonContent, IonPage, IonInput, IonButton, IonLabel, IonItem, IonList, IonText } from '@ionic/react';
+import { useClientes } from '../providers/ClientesProvider';
 
-const ProveedorPage: React.FC = () => {
+const ClientePage: React.FC = () => {
+  const { clientes, agregarCliente, modificarCliente, eliminarCliente, consultarCliente } = useClientes();
+
+  const [nombre, setNombre] = useState('');
+  const [apellido, setApellido] = useState('');
+  const [edad, setEdad] = useState<number | string>('');
+  const [email, setEmail] = useState('');
+
+  const handleAgregar = () => {
+    if (nombre && apellido && edad && email) {
+      const nuevoCliente = { nombre, apellido, edad: Number(edad), email };
+      agregarCliente(nuevoCliente);
+      limpiarCampos();
+    } else {
+      alert('Por favor complete todos los campos.');
+    }
+  };
+
+  const handleModificar = (index: number) => {
+    if (nombre && apellido && edad && email) {
+      const clienteModificado = { nombre, apellido, edad: Number(edad), email };
+      modificarCliente(index, clienteModificado);
+      limpiarCampos();
+    } else {
+      alert('Por favor complete todos los campos.');
+    }
+  };
+
+  const handleEliminar = (index: number) => {
+    eliminarCliente(index);
+  };
+
+  const handleConsultar = (index: number) => {
+    const cliente = consultarCliente(index);
+    if (cliente) {
+      setNombre(cliente.nombre);
+      setApellido(cliente.apellido);
+      setEdad(cliente.edad.toString());
+      setEmail(cliente.email);
+    }
+  };
+
+  const limpiarCampos = () => {
+    setNombre('');
+    setApellido('');
+    setEdad('');
+    setEmail('');
+  };
+
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Proveedor</IonTitle>
-        </IonToolbar>
-      </IonHeader>
       <IonContent>
-        <h1>Página de Proveedor</h1>
+        <IonList>
+          <IonItem>
+            <IonLabel position="stacked">Nombre</IonLabel>
+            <IonInput
+              value={nombre}
+              onIonChange={(e) => setNombre(e.detail.value!)}
+              placeholder="Escribe el nombre"
+            />
+          </IonItem>
+          <IonItem>
+            <IonLabel position="stacked">Apellido</IonLabel>
+            <IonInput
+              value={apellido}
+              onIonChange={(e) => setApellido(e.detail.value!)}
+              placeholder="Escribe el apellido"
+            />
+          </IonItem>
+          <IonItem>
+            <IonLabel position="stacked">Edad</IonLabel>
+            <IonInput
+              type="number"
+              value={edad}
+              onIonChange={(e) => setEdad(e.detail.value!)}
+              placeholder="Escribe la edad"
+            />
+          </IonItem>
+          <IonItem>
+            <IonLabel position="stacked">Correo Electrónico</IonLabel>
+            <IonInput
+              type="email"
+              value={email}
+              onIonChange={(e) => setEmail(e.detail.value!)}
+              placeholder="Escribe el correo electrónico"
+            />
+          </IonItem>
+        </IonList>
+
+        <IonButton expand="full" onClick={handleAgregar}>Agregar</IonButton>
+        <IonButton expand="full" onClick={() => handleModificar(clientes.findIndex(cliente => cliente.email === email))}>
+          Modificar
+        </IonButton>
+        <IonButton expand="full" onClick={() => handleEliminar(clientes.findIndex(cliente => cliente.email === email))}>
+          Eliminar
+        </IonButton>
+        <IonButton expand="full" onClick={() => handleConsultar(clientes.findIndex(cliente => cliente.email === email))}>
+          Consultar
+        </IonButton>
+
+        <IonList>
+          <h2>Clientes Registrados</h2>
+          {clientes.length === 0 ? (
+            <IonText color="danger">No hay clientes registrados.</IonText>
+          ) : (
+            clientes.map((cliente, index) => (
+              <IonItem key={index}>
+                <IonLabel>
+                  <h3>{cliente.nombre} {cliente.apellido}</h3>
+                  <p>Edad: {cliente.edad}</p>
+                  <p>Email: {cliente.email}</p>
+                </IonLabel>
+                <IonButton fill="clear" onClick={() => handleConsultar(index)}>Ver</IonButton>
+              </IonItem>
+            ))
+          )}
+        </IonList>
       </IonContent>
     </IonPage>
   );
 };
 
-export default ProveedorPage;
+export default ClientePage;
