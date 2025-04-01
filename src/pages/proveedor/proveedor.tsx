@@ -1,127 +1,89 @@
 import React, { useState } from 'react';
-import { IonContent, IonPage, IonInput, IonButton, IonLabel, IonItem, IonList, IonText } from '@ionic/react';
-import { useClientes } from '../providers/ClientesProvider';
+import { IonButton, IonContent, IonInput, IonItem, IonLabel, IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton } from '@ionic/react';
 
-const ClientePage: React.FC = () => {
-  const { clientes, agregarCliente, modificarCliente, eliminarCliente, consultarCliente } = useClientes();
-
-  const [nombre, setNombre] = useState('');
-  const [apellido, setApellido] = useState('');
+const Proveedor: React.FC = () => {
+  const [nombre, setNombre] = useState<string>('');
+  const [apellido, setApellido] = useState<string>('');
   const [edad, setEdad] = useState<number | string>('');
-  const [email, setEmail] = useState('');
+  const [correo, setCorreo] = useState<string>('');
 
+  // Funciones para manejar las operaciones
   const handleAgregar = () => {
-    if (nombre && apellido && edad && email) {
-      const nuevoCliente = { nombre, apellido, edad: Number(edad), email };
-      agregarCliente(nuevoCliente);
-      limpiarCampos();
-    } else {
-      alert('Por favor complete todos los campos.');
-    }
+    console.log('Proveedor agregado:', { nombre, apellido, edad, correo });
+    // Aquí se puede agregar lógica para enviar estos datos a una API o base de datos
   };
 
-  const handleModificar = (index: number) => {
-    if (nombre && apellido && edad && email) {
-      const clienteModificado = { nombre, apellido, edad: Number(edad), email };
-      modificarCliente(index, clienteModificado);
-      limpiarCampos();
-    } else {
-      alert('Por favor complete todos los campos.');
-    }
+  const handleModificar = () => {
+    console.log('Proveedor modificado:', { nombre, apellido, edad, correo });
+    // Aquí se puede agregar lógica para modificar los datos de un proveedor existente
   };
 
-  const handleEliminar = (index: number) => {
-    eliminarCliente(index);
+  const handleEliminar = () => {
+    console.log('Proveedor eliminado:', { nombre, apellido, edad, correo });
+    // Aquí se puede agregar lógica para eliminar un proveedor
   };
 
-  const handleConsultar = (index: number) => {
-    const cliente = consultarCliente(index);
-    if (cliente) {
-      setNombre(cliente.nombre);
-      setApellido(cliente.apellido);
-      setEdad(cliente.edad.toString());
-      setEmail(cliente.email);
-    }
-  };
-
-  const limpiarCampos = () => {
-    setNombre('');
-    setApellido('');
-    setEdad('');
-    setEmail('');
+  const handleConsultar = () => {
+    console.log('Consultar proveedor con los siguientes datos:', { nombre, apellido, edad, correo });
+    // Aquí se puede agregar lógica para consultar los datos de un proveedor
   };
 
   return (
     <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          <IonButtons slot="start">
+            <IonBackButton />
+          </IonButtons>
+          <IonTitle>Gestión de Proveedores</IonTitle>
+        </IonToolbar>
+      </IonHeader>
       <IonContent>
-        <IonList>
-          <IonItem>
-            <IonLabel position="stacked">Nombre</IonLabel>
-            <IonInput
-              value={nombre}
-              onIonChange={(e) => setNombre(e.detail.value!)}
-              placeholder="Escribe el nombre"
-            />
-          </IonItem>
-          <IonItem>
-            <IonLabel position="stacked">Apellido</IonLabel>
-            <IonInput
-              value={apellido}
-              onIonChange={(e) => setApellido(e.detail.value!)}
-              placeholder="Escribe el apellido"
-            />
-          </IonItem>
-          <IonItem>
-            <IonLabel position="stacked">Edad</IonLabel>
-            <IonInput
-              type="number"
-              value={edad}
-              onIonChange={(e) => setEdad(e.detail.value!)}
-              placeholder="Escribe la edad"
-            />
-          </IonItem>
-          <IonItem>
-            <IonLabel position="stacked">Correo Electrónico</IonLabel>
-            <IonInput
-              type="email"
-              value={email}
-              onIonChange={(e) => setEmail(e.detail.value!)}
-              placeholder="Escribe el correo electrónico"
-            />
-          </IonItem>
-        </IonList>
+        <IonItem>
+          <IonLabel position="floating">Nombre</IonLabel>
+          <IonInput
+            value={nombre}
+            onIonChange={(e) => setNombre(e.detail.value!)}
+            required
+          />
+        </IonItem>
+
+        <IonItem>
+          <IonLabel position="floating">Apellido</IonLabel>
+          <IonInput
+            value={apellido}
+            onIonChange={(e) => setApellido(e.detail.value!)}
+            required
+          />
+        </IonItem>
+
+        <IonItem>
+          <IonLabel position="floating">Edad</IonLabel>
+          <IonInput
+            type="number"
+            value={edad}
+            onIonChange={(e) => setEdad(e.detail.value!)}
+            required
+          />
+        </IonItem>
+
+        <IonItem>
+          <IonLabel position="floating">Correo Electrónico</IonLabel>
+          <IonInput
+            value={correo}
+            onIonChange={(e) => setCorreo(e.detail.value!)}
+            type="email"
+            required
+          />
+        </IonItem>
 
         <IonButton expand="full" onClick={handleAgregar}>Agregar</IonButton>
-        <IonButton expand="full" onClick={() => handleModificar(clientes.findIndex(cliente => cliente.email === email))}>
-          Modificar
-        </IonButton>
-        <IonButton expand="full" onClick={() => handleEliminar(clientes.findIndex(cliente => cliente.email === email))}>
-          Eliminar
-        </IonButton>
-        <IonButton expand="full" onClick={() => handleConsultar(clientes.findIndex(cliente => cliente.email === email))}>
-          Consultar
-        </IonButton>
-
-        <IonList>
-          <h2>Clientes Registrados</h2>
-          {clientes.length === 0 ? (
-            <IonText color="danger">No hay clientes registrados.</IonText>
-          ) : (
-            clientes.map((cliente, index) => (
-              <IonItem key={index}>
-                <IonLabel>
-                  <h3>{cliente.nombre} {cliente.apellido}</h3>
-                  <p>Edad: {cliente.edad}</p>
-                  <p>Email: {cliente.email}</p>
-                </IonLabel>
-                <IonButton fill="clear" onClick={() => handleConsultar(index)}>Ver</IonButton>
-              </IonItem>
-            ))
-          )}
-        </IonList>
+        <IonButton expand="full" onClick={handleModificar}>Modificar</IonButton>
+        <IonButton expand="full" onClick={handleEliminar}>Eliminar</IonButton>
+        <IonButton expand="full" onClick={handleConsultar}>Consultar</IonButton>
       </IonContent>
     </IonPage>
   );
 };
 
-export default ClientePage;
+export default Proveedor;

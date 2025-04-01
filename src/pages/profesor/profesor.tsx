@@ -1,127 +1,114 @@
-// src/pages/ProfesorPage.tsx
 import React, { useState } from 'react';
-import { IonContent, IonPage, IonInput, IonButton, IonLabel, IonItem, IonList, IonText } from '@ionic/react';
-import { useProfesores } from '../providers/ProfesoresProvider';
+import { IonContent, IonPage, IonInput, IonButton, IonLabel, IonItem, IonList, IonAlert } from '@ionic/react';
 
 const ProfesorPage: React.FC = () => {
-  const { profesores, agregarProfesor, modificarProfesor, eliminarProfesor, consultarProfesor } = useProfesores();
-
-  // Estado para los campos del formulario
-  const [nombre, setNombre] = useState('');
-  const [apellido, setApellido] = useState('');
+  // Definir estado para los campos de entrada
+  const [nombre, setNombre] = useState<string>('');
+  const [apellido, setApellido] = useState<string>('');
   const [edad, setEdad] = useState<number | string>('');
-  const [correo, setCorreo] = useState('');
+  const [email, setEmail] = useState<string>('');
 
-  // Funciones de los botones
-  const handleAgregar = () => {
-    if (nombre && apellido && edad && correo) {
-      const nuevoProfesor = { nombre, apellido, edad: Number(edad), correo };
-      agregarProfesor(nuevoProfesor);
-      limpiarCampos();
+  const [alertMessage, setAlertMessage] = useState<string>('');
+  const [showAlert, setShowAlert] = useState<boolean>(false);
+
+  // Funciones para manejar los eventos de los botones
+  const handleAdd = () => {
+    if (nombre && apellido && edad && email) {
+      setAlertMessage('Profesor agregado exitosamente.');
+      setShowAlert(true);
+      // Aquí puedes agregar lógica para agregar un profesor a tu base de datos
     } else {
-      alert('Por favor complete todos los campos.');
+      setAlertMessage('Por favor, completa todos los campos.');
+      setShowAlert(true);
     }
   };
 
-  const handleModificar = (index: number) => {
-    if (nombre && apellido && edad && correo) {
-      const profesorModificado = { nombre, apellido, edad: Number(edad), correo };
-      modificarProfesor(index, profesorModificado);
-      limpiarCampos();
+  const handleModify = () => {
+    if (nombre && apellido && edad && email) {
+      setAlertMessage('Profesor modificado exitosamente.');
+      setShowAlert(true);
+      // Aquí puedes agregar lógica para modificar un profesor en tu base de datos
     } else {
-      alert('Por favor complete todos los campos.');
+      setAlertMessage('Por favor, completa todos los campos.');
+      setShowAlert(true);
     }
   };
 
-  const handleEliminar = (index: number) => {
-    eliminarProfesor(index);
+  const handleDelete = () => {
+    setAlertMessage('Profesor eliminado exitosamente.');
+    setShowAlert(true);
+    // Aquí puedes agregar lógica para eliminar un profesor de tu base de datos
   };
 
-  const handleConsultar = (index: number) => {
-    const profesor = consultarProfesor(index);
-    if (profesor) {
-      setNombre(profesor.nombre);
-      setApellido(profesor.apellido);
-      setEdad(profesor.edad.toString());
-      setCorreo(profesor.correo);
-    }
-  };
-
-  const limpiarCampos = () => {
-    setNombre('');
-    setApellido('');
-    setEdad('');
-    setCorreo('');
+  const handleConsult = () => {
+    setAlertMessage('Consulta realizada exitosamente.');
+    setShowAlert(true);
+    // Aquí puedes agregar lógica para consultar un profesor en tu base de datos
   };
 
   return (
     <IonPage>
       <IonContent>
         <IonList>
+          {/* Nombre */}
           <IonItem>
-            <IonLabel position="stacked">Nombre</IonLabel>
+            <IonLabel position="floating">Nombre</IonLabel>
             <IonInput
               value={nombre}
               onIonChange={(e) => setNombre(e.detail.value!)}
-              placeholder="Escribe el nombre"
+              required
             />
           </IonItem>
+
+          {/* Apellido */}
           <IonItem>
-            <IonLabel position="stacked">Apellido</IonLabel>
+            <IonLabel position="floating">Apellido</IonLabel>
             <IonInput
               value={apellido}
               onIonChange={(e) => setApellido(e.detail.value!)}
-              placeholder="Escribe el apellido"
+              required
             />
           </IonItem>
+
+          {/* Edad */}
           <IonItem>
-            <IonLabel position="stacked">Edad</IonLabel>
+            <IonLabel position="floating">Edad</IonLabel>
             <IonInput
               type="number"
               value={edad}
               onIonChange={(e) => setEdad(e.detail.value!)}
-              placeholder="Escribe la edad"
+              required
             />
           </IonItem>
+
+          {/* Correo electrónico */}
           <IonItem>
-            <IonLabel position="stacked">Correo Electrónico</IonLabel>
+            <IonLabel position="floating">Correo electrónico</IonLabel>
             <IonInput
               type="email"
-              value={correo}
-              onIonChange={(e) => setCorreo(e.detail.value!)}
-              placeholder="Escribe el correo electrónico"
+              value={email}
+              onIonChange={(e) => setEmail(e.detail.value!)}
+              required
             />
           </IonItem>
         </IonList>
 
-        <IonButton expand="full" onClick={handleAgregar}>Agregar</IonButton>
-        <IonButton expand="full" onClick={() => handleModificar(profesores.findIndex(profesor => profesor.correo === correo))}>
-          Modificar
-        </IonButton>
-        <IonButton expand="full" onClick={() => handleEliminar(profesores.findIndex(profesor => profesor.correo === correo))}>
-          Eliminar
-        </IonButton>
-        <IonButton expand="full" onClick={() => handleConsultar(profesores.findIndex(profesor => profesor.correo === correo))}>
-          Consultar
-        </IonButton>
+        {/* Botones */}
+        <div style={{ marginTop: '20px', textAlign: 'center' }}>
+          <IonButton expand="block" onClick={handleAdd}>Agregar</IonButton>
+          <IonButton expand="block" onClick={handleModify}>Modificar</IonButton>
+          <IonButton expand="block" onClick={handleDelete}>Eliminar</IonButton>
+          <IonButton expand="block" onClick={handleConsult}>Consultar</IonButton>
+        </div>
 
-        <IonList>
-          <h2>Profesores Registrados</h2>
-          {profesores.length === 0 ? (
-            <IonText color="danger">No hay profesores registrados.</IonText>
-          ) : (
-            profesores.map((profesor, index) => (
-              <IonItem key={index}>
-                <IonLabel>
-                  <h3>{profesor.nombre} {profesor.apellido}</h3>
-                  <p>Edad: {profesor.edad}</p>
-                  <p>Email: {profesor.correo}</p>
-                </IonLabel>
-                <IonButton fill="clear" onClick={() => handleConsultar(index)}>Ver</IonButton>
-              </IonItem>
-            ))
-          )}
-        </IonList>
+        {/* Alerta de acción */}
+        <IonAlert
+          isOpen={showAlert}
+          onDidDismiss={() => setShowAlert(false)}
+          header={'Acción Realizada'}
+          message={alertMessage}
+          buttons={['OK']}
+        />
       </IonContent>
     </IonPage>
   );
